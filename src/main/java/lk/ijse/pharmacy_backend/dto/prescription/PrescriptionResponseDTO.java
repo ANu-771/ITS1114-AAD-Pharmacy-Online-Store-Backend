@@ -1,0 +1,30 @@
+package lk.ijse.pharmacy_backend.dto.prescription;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PrescriptionResponseDTO {
+
+    private Long id;
+    private Long userId;
+    private String userEmail;
+    private String userFullName;
+    private Long orderId;
+    private String orderNumber;
+    private String doctorName;
+    private String patientName;
+    private String prescriptionUrl;
+    private String status;
+    private String notes;
+    private LocalDateTime reviewedAt;
+    private String reviewedBy;
+    private LocalDateTime createdAt;
+}

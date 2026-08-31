@@ -1,0 +1,132 @@
+# ==========================================
+# KK Digital Pharmacy — Backend .gitignore
+# Spring Boot / Maven / Java / IDEs / OS
+# ==========================================
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+logs/
+*.log.*
+
+# Package / Archive files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# Maven Build Output
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Gradle Build Output (if applicable)
+.gradle
+/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ==========================================
+# IDE & Editor Specific Files
+# ==========================================
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.idea_modules/
+
+# Eclipse / Spring Tool Suite (STS)
+.apt_generated
+.apt_generated_tests
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+bin/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+.history/
+.ionide/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ==========================================
+# Operating System Specific Files
+# ==========================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ==========================================
+# Environment & Local Configuration Overrides
+# (Keeps production/default application.properties tracked,
+#  while ignoring local secret overrides)
+# ==========================================
+.env
+.env.local
+.env.*.local
+*.local.properties
+application-local.properties
+application-local.yml
+application-local.yaml
+application-dev-local.properties
+application-dev-local.yml
+
+# Temporary and Upload Directories
+uploads/
+temp_uploads/
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.swp
