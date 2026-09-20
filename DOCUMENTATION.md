@@ -314,4 +314,62 @@ The system now hosts an expanded catalog of 14 certified healthcare products acr
 | **14**| Calcium Carbonate + Vitamin D3 60s | Vita-Premium | Vitamins | Rs. 2,800.00 | Calcium 600mg + Vit D3 400IU Bone Density |
 
 ---
+
+## 12. ADMIN PANEL UI & HIGH-CONTRAST BADGE SYSTEM
+
+To ensure optimal accessibility and readability across the Admin Management views (Products, Inventory, Categories, Orders):
+
+- **Category Badges (`.badge-category-yellow`, `.badge-category`)**: Styled with a high-contrast soft amber/yellow background (`#FEF08A`), deep amber/brown text (`#854D0E`), golden border (`#FACC15`), and rounded pill geometry with 600 weight typography. This resolves contrast issues with white table row backgrounds.
+- **Payment Method Badges (`.badge-payment-method`)**: Soft teal-blue pill badge with dark navy text.
+- **Text Utility (`.text-navy`)**: Explicitly defined `#003B66 !important` to ensure text retains high contrast inside custom badges and light components.
+
+---
+
+## 13. HEALTHCARE STANDARD STAT TILES & PHARMACEUTICAL WATERMARK SYSTEM
+
+The four core trust & volume metric tiles under *"The KK PHARMACY Healthcare Standard"* are styled with dynamic pharmaceutical visuals:
+
+- **Background Art & Radial Gradients**: Soft themed radial gradients (`rgba(224, 242, 254, 0.65)` for Medicines, emerald for Patients, sapphire indigo for Delivery, and warm amber for Genuine Quality).
+- **Embedded Pharmaceutical Watermarks (`.stat-bg-watermark`)**: Large, subtle (opacity 0.07 -> 0.15 on hover) pharmaceutical vector glyphs (`bi-capsule`, `bi-heart-pulse-fill`, `bi-truck-front-fill`, `bi-award-fill`) that rotate and smoothly expand when hovered.
+- **Top Glow Accent Bars**: Multi-color linear gradient top caps representing each healthcare department.
+- **Verification Micro-Badges (`.stat-tag`)**: Trust markers attached to each metric (*"Rx & OTC Verified"*, *"Trusted Care"*, *"Islandwide Express"*, *"NMRA Approved"*).
+
+---
+
+## 14. 4 PILLARS OF MEDICAL TRUST TILE SUITE (ABOUT & HOMEPAGE)
+
+The *"4 Pillars of Medical Trust"* and core healthcare value boxes are upgraded with modern UI styling:
+
+- **Clinical Card Architecture (`.trust-card`, `.feature-box`)**: Glassmorphic backgrounds with subtle themed radial color meshes (NMRA blue, Cold-Chain cryo-cyan, Pharmacist emerald, and Patient-first rose).
+- **Background Medical Watermarks (`.trust-bg-watermark`)**: Oversized, ultra-crisp vector glyphs (`bi-shield-check`, `bi-snow2`, `bi-person-badge-fill`, `bi-heart-pulse-fill`) with subtle transparency (0.06 normal -> 0.16 hover) and smooth 3D rotation expansion.
+- **Interactive Micro-Motions**: Cards lift on hover (`translateY(-8px)`) with expanded ambient shadow and squircle icon rotational pulse (`scale(1.1) rotate(5deg)`).
+- **Trust Badges (`.trust-tag`)**: Departmental certification markers embedded into each card (*"Regulatory Approved"*, *"2°C – 8°C Monitored"*, *"Clinical Oversight"*, *"24/7 Care & Refills"*).
+
+---
+
+## 15. ABOUT US CORNER FLOATING LOGO ORB CLUSTER & STAR PARTICLES
+
+The floating UI on the **About Us** page hero showcase has been streamlined into pure floating glassmorphic logo bubbles clustered around the hero image corner:
+
+- **Word Removal & Pure Logo Orbs (`.floating-logo-bubble`)**: Replaced rectangular text pills with sleek, frosted-glass circular logo bubbles containing pure pharmaceutical glyphs/emojis (`💊`, `🛡️ NMRA Shield`, `🩺 Heartbeat Care`, `💉 Dispense`).
+- **Corner Constellation & Separate Independent Floating**:
+  1. **💊 3D Pill Capsule Orb (`.corner-orb-pill`)**: Floats up & down with rotational swing (`orbFloatSeparate1`).
+  2. **🛡️ NMRA Shield Orb (`.corner-orb-shield`)**: Royal sapphire floating bubble with independent oscillation (`orbFloatSeparate2`).
+  3. **🩺 Heartbeat Care Orb (`.corner-orb-heart`)**: Mint-emerald floating pulse orb (`orbFloatSeparate3`).
+  4. **💉 Digital Dispense Orb (`.corner-orb-syringe`)**: Indigo-cyan floating syringe orb (`orbFloatSeparate4`).
+- **Twinkling Star Particles (`.floating-star`)**: 4 glowing star sparkles (`bi-stars`, `bi-sparkle`, `bi-plus-lg`, `bi-star-fill`) continuing to twinkle and float like stars across the hero image.
+- **Hover Interactions**: Hovering over any orb pauses its floating motion and smoothly scales it to `1.24x` with an illuminated medical halo.
+
+---
+
+## 16. MEDICAL CATEGORY TILE SUITE & CLINICAL AESTHETICS
+
+The 6 departmental category tiles on [categories.html](file:///d:/sem%202/API%20Development/API%20Final%20Course%20Work/Pharmacy%20website/pharmacy_frontend/pages/categories.html) and homepage quick navigation are enhanced with professional pharmacy design language:
+
+- **Departmental Radial Gradients (`.category-card-premium`)**: Individual soft clinical color meshes tailored to each healthcare division (Medicines cyan, Prescription cobalt, Equipment mint-teal, Vitamins amber, Personal Care azure, and Baby Care soft rose).
+- **Background Pharmaceutical Watermarks (`.category-bg-watermark`)**: Large, subtle vector glyphs (`bi-capsule`, `bi-file-earmark-medical`, `bi-heart-pulse-fill`, `bi-lightning-charge-fill`, `bi-droplet-fill`, `bi-emoji-smile-fill`) in the bottom-right corner with 0.06 -> 0.16 hover expansion.
+- **Top Accent Color Bars**: Linear gradient top indicator bars for visual department demarcation.
+- **Micro-Interactions**: Smooth `translateY(-8px)` lift on hover with glowing squircle icon rotational pulse (`scale(1.1) rotate(5deg)`) and active pill badge transitions.
+
+---
 *Document maintained automatically with each build increment.*
