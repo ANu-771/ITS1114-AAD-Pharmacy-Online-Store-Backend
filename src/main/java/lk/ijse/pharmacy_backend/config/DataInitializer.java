@@ -66,7 +66,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // 1. Admin account
         if (userRepository.findByEmail("admin@kkdigitalpharmacy.com").isEmpty() &&
-                userRepository.findByEmail("admin@medora.com").isEmpty()) {
+                userRepository.findByEmail("admin@kkpharmacy.com").isEmpty() && userRepository.findByEmail("admin@medora.com").isEmpty()) {
             User admin = User.builder()
                     .email("admin@kkdigitalpharmacy.com")
                     .password(passwordEncoder.encode("admin123"))
@@ -81,7 +81,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // 2. Pharmacist account
         if (userRepository.findByEmail("pharmacist@kkdigitalpharmacy.com").isEmpty() &&
-                userRepository.findByEmail("pharmacist@medora.com").isEmpty()) {
+                userRepository.findByEmail("pharmacist@kkpharmacy.com").isEmpty() && userRepository.findByEmail("pharmacist@medora.com").isEmpty()) {
             User pharmacist = User.builder()
                     .email("pharmacist@kkdigitalpharmacy.com")
                     .password(passwordEncoder.encode("pharma123"))
