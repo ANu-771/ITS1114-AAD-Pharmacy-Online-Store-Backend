@@ -372,4 +372,14 @@ The 6 departmental category tiles on [categories.html](file:///d:/sem%202/API%20
 - **Micro-Interactions**: Smooth `translateY(-8px)` lift on hover with glowing squircle icon rotational pulse (`scale(1.1) rotate(5deg)`) and active pill badge transitions.
 
 ---
+
+## 17. DYNAMIC REST API CATEGORY VISUAL METADATA ENRICHMENT
+
+Resolved an issue where live Spring Boot REST API responses (which return numeric category IDs without frontend icon/theme mappings) were causing all 6 categories to fall back to a default capsule pill icon:
+
+- **Smart Metadata Resolver (`ProductService._resolveCategoryMeta`)**: Intelligently classifies categories by keyword, slug, or ID into their respective clinical departments (*Medicines*, *Prescription Medicines*, *Medical Equipment*, *Vitamins & Supplements*, *Personal Care*, *Baby Care*).
+- **Unique Visual Identifiers**: Restored dedicated Bootstrap icons (`bi-capsule`, `bi-file-earmark-medical`, `bi-heart-pulse`, `bi-lightning-charge`, `bi-droplet-half`, `bi-emoji-smile`), matching watermarks, and accurate product metrics (e.g. `1,200+ Products`, `850+ Products`, `420+ Devices`, `650+ Products`, `980+ Items`, `340+ Items`).
+- **CSS Selector Mapping**: Supported both numeric IDs (`.category-card-1` through `.category-card-6`) and department slugs so all background radial gradients, glowing squircle icons, and top indicator bars render with live API data.
+
+---
 *Document maintained automatically with each build increment.*
