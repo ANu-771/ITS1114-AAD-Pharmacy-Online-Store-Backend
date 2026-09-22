@@ -409,5 +409,38 @@ Every healthcare category tile across the infinite horizontal carousel and categ
   7. **First Aid & Emergency (`.category-card-first-aid`, `.category-card-7`)**: Soft Coral Ruby gradient (`#FEF2F2` -> `#FECACA`), Ruby Red squircle avatar icon box (`#DC2626`), crimson top accent bar, and watermarked bandaid glyph.
 - **Enhanced Avatar Contrast**: Squircle icon boxes use vibrant background gradients with a crisp white icon glyph and soft matching drop shadows, ensuring instant visual recognition without harsh eye strain.
 
+## 20. ABOUT US PAGE — SCROLL-TRIGGERED STAT COUNTER ANIMATIONS
+
+The key healthcare performance metrics on the About Us page ([pages/about.html](file:///d:/sem%202/API%20Development/API%20Final%20Course%20Work/Pharmacy%20website/pharmacy_frontend/pages/about.html)) have been upgraded from static text into **dynamic scroll-triggered counting ticker animations**:
+
+- **Animated Metric Counters**:
+  1. **100% Authentic Medicines**: Smooth count-up from `0%` to `100%`.
+  2. **50,000+ Prescriptions Dispensed**: Formatted numeric ticker from `0+` up to `50,000+` with comma grouping (`1,250+`, `18,400+`, ..., `50,000+`).
+  3. **24/7 Clinical Guidance**: Clinical availability ticker from `0/7` to `24/7`.
+- **Scroll-Triggered Detection (`IntersectionObserver`)**: Counters start immediately when entering viewport during scroll with cubic ease-out (`1 - Math.pow(1 - progress, 3)`) over 2.0s, decelerating smoothly to their target numbers.
+- **Visual Staggered Reveal**: Each stat item has frosted-glass styling (`.about-stat-item`), sapphire left indicator border, and a staggered slide-up entrance (`statItemReveal`).
+- **Completion Micro-Pulse (`counterPopCelebration`)**: Gentle completion pulse and ambient glow when numbers lock into their exact values.
+- **Scroll Re-Trigger Support**: When the user scrolls past the section and returns, the observer re-activates the count-up sequence.
+
+---
+
+## 21. REAL CUSTOMER AUTHENTICATION & REMOVAL OF DEMO CREDENTIALS UI
+
+Cleaned up all coursework demo credential buttons and hardcoded pre-filled values to provide a **production-grade authentication experience** for real customer registrations and database admin accounts:
+
+- **Clean & Professional Login Modal (`js/app.js`)**:
+  - Removed hardcoded `user@example.com` and `password123` values.
+  - Removed the coursework demo buttons container (`User Demo` / `Admin Demo`).
+  - Added clean, accessible placeholders (`name@example.com` and `Enter your password`) with proper `autocomplete` attributes.
+- **Standalone Login Page Cleanup (`pages/login.html` & `js/pages/login.js`)**:
+  - Removed the *Instant Coursework Role Switcher* block.
+  - Cleaned up demo button event listeners.
+- **Seamless New Customer Registration (`js/services/auth-service.js` & `pages/register.html`)**:
+  - Removed legacy blocking alert popup upon registration.
+  - Direct connection to Spring Boot `/api/v1/auth/register` creates new customer accounts directly in the database with BCrypt-hashed passwords and `ROLE_USER`.
+  - Automatically stores JWT tokens in `StorageService` upon registration, immediately logging the new user into their session and redirecting them to their profile.
+- **Full Database Admin Support Maintained**:
+  - Spring Boot database admin credentials authenticate against MySQL via `/api/v1/auth/login` and automatically grant `ROLE_ADMIN` routing to `/admin/dashboard.html`.
+
 ---
 *Document maintained automatically with each build increment.*
