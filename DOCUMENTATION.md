@@ -562,4 +562,24 @@ Implemented an enterprise-grade initial loading screen and strict server connect
   - Configured Spring Security to permit public, unauthenticated access to `/api/v1/test/**`.
 
 ---
+
+## 29. SECURE MEDIMATE AI CHATBOT (BACKEND PROXY & SITE-ENTRY WELCOME BUBBLE)
+
+Implemented an enterprise-grade AI chatbot architecture with zero client-side credential exposure and modern customer engagement:
+
+- **Spring Boot AI Proxy Controller (`ChatController.java` & `ChatServiceImpl.java`)**:
+  - Exposes `POST /api/v1/chat` and `GET /api/v1/chat/status`.
+  - Google Gemini API key is maintained 100% securely on the server via `gemini.api.key=${GEMINI_API_KEY:}` and configurable model `gemini.model=${GEMINI_MODEL:gemini-2.0-flash}`. Zero API keys are sent to or stored in client-side code.
+  - Injects clinical pharmaceutical guidelines, emergency safety disclaimers, and store delivery policies on the server before dispatching to Google Generative AI REST API.
+- **Removed Simulated Mock Fallbacks (`js/pages/chat-bot.js`)**:
+  - Eliminated client-side keyword pattern matching. If the backend detects no API key or if the service is unreachable, it transparently responds with an honest clinical advisory notice:
+    > *"⚠️ MediMate AI Assistant is currently unavailable. For medical advice or urgent prescription verification, please contact our licensed pharmacists directly at +94 11 234 5678."*
+  - Automatically disables the input box to prevent confusion.
+- **Interactive Site-Entry Welcome Speech Bubble (`css/components.css` & `js/pages/chat-bot.js`)**:
+  - Displays a floating medical greeting bubble (`.ai-welcome-bubble`) above the robot FAB 2.5 seconds after a user enters the site:
+    *"👋 Need help? Ask MediMate for medicine advice, dosages, or orders!"*
+  - Clicking the bubble immediately opens the chat assistant.
+  - Dismissal with `[×]` stores session memory in `sessionStorage` to avoid intrusive re-prompting during navigation.
+
+---
 *Document maintained automatically with each build increment.*

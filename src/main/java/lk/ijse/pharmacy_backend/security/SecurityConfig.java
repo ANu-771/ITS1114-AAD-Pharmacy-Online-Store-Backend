@@ -44,8 +44,9 @@ public class SecurityConfig {
                         // 1. Public Authentication Endpoints
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
-                        // 2. Public Health & Catalog Browsing (GET/POST)
+                        // 2. Public Health, AI Chatbot & Catalog Browsing (GET/POST)
                         .requestMatchers("/api/v1/test/**").permitAll()
+                        .requestMatchers("/api/v1/chat/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/brands/**").permitAll()
