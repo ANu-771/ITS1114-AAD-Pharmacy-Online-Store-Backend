@@ -256,6 +256,33 @@ public class ProductServiceImpl implements ProductService {
             medicineDetailsRepository.save(details);
         });
 
+        // Update Inventory stock if provided
+        if (request.getInitialStock() != null) {
+            inventoryRepository.findByProduct(product).ifPresent(inv -> {
+                inv.setCurrentStock(request.getInitialStock());
+                if (request.getReorderLevel() != null) inv.setReorderLevel(request.getReorderLevel());
+                inventoryRepository.save(inv);
+            });
+        }
+
+        // Update Primary Image URL if provided
+        if (request.getImage() != null && !request.getImage().isBlank()) {
+            List<ProductImage> existingImages = productImageRepository.findByProductOrderByDisplayOrderAsc(product);
+            if (!existingImages.isEmpty()) {
+                ProductImage primary = existingImages.get(0);
+                primary.setImageUrl(request.getImage().trim());
+                productImageRepository.save(primary);
+            } else {
+                ProductImage newImg = ProductImage.builder()
+                        .product(product)
+                        .imageUrl(request.getImage().trim())
+                        .isPrimary(true)
+                        .displayOrder(0)
+                        .build();
+                productImageRepository.save(newImg);
+            }
+        }
+
         return mapToDTO(updatedProduct);
     }
 

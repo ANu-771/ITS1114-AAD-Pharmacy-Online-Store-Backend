@@ -443,4 +443,57 @@ Cleaned up all coursework demo credential buttons and hardcoded pre-filled value
   - Spring Boot database admin credentials authenticate against MySQL via `/api/v1/auth/login` and automatically grant `ROLE_ADMIN` routing to `/admin/dashboard.html`.
 
 ---
+
+## 22. CUSTOMER REGISTRATION FORM BOOTSTRAPPING & PERSISTENCE FIX
+
+Resolved the defect where submitting the registration form on `pages/register.html` triggered a native browser GET query-string reload (`register.html?`) without saving the new user to MySQL:
+
+- **App Router Registration (`js/app.js`)**:
+  - Added explicit routing for `register-page-main` (`RegisterPage.init()`) and `login-page-main` (`LoginPage.init()`) within the DOM ready lifecycle.
+- **Self-Bootstrapping Guarantees (`js/pages/register.js` & `js/pages/login.js`)**:
+  - Attached automatic `DOMContentLoaded` listeners inside `register.js` and `login.js` so form event listeners are guaranteed to attach regardless of script execution order.
+- **Defensive HTML Submission Guards (`pages/register.html` & `pages/login.html`)**:
+  - Added `action="javascript:void(0);"` and `onsubmit="return false;"` to `<form id="registerForm">` and `<form id="standaloneLoginForm">` to eliminate inadvertent page refreshes.
+- **Address Data Preservation**:
+  - Automatically captures `Delivery Street Address` and `City / District` on registration, preserving them in the authenticated customer's session for zero-friction checkout and profile management.
+
+---
+
+## 23. HEADER OVERLAY STACKING ISOLATION & PROFESSIONAL PROFILE CIRCLE
+
+Resolved visual collision between Tier 1 header profile dropdown and Tier 2 capsule navigation bar, modernizing profile UI to enterprise standards:
+
+- **Stacking Context & Z-Index Isolation (`css/components.css`)**:
+  - Added explicit stacking hierarchy: `.pharmacy-main-navbar` (`z-index: 1050;`), `#nav-auth-container` (`z-index: 1060;`), and `.glass-dropdown-menu` (`z-index: 9999 !important;`).
+  - Tier 2 navigation `.floating-capsule-nav-container` and `.floating-capsule-navbar` pinned to lower context (`z-index: 1010;`), ensuring dropdown menus render completely unobstructed above all header elements and hero banners.
+- **Admin Panel Relocation & Architecture (`js/components/navbar.js`)**:
+  - Removed intrusive `Admin Panel` button from customer category navigation (Tier 2), keeping storefront catalog purely customer-facing.
+  - Relocated Administrator quick-access to Tier 1 top action bar via `.header-admin-pill` alongside Cart/Wishlist for instant 1-click access.
+  - Added an integrated **Admin Control Center** launch card and role badge (`ADMIN`) inside the user profile dropdown card.
+- **Professional Web Store Profile Circle Avatar (`js/components/navbar.js` & `css/components.css`)**:
+  - Implemented dynamic user initials bubble (e.g., `KK`) styled with medical blue gradient avatar circles, replacing default generic icons.
+  - Formatted desktop trigger as a sleek capsule pill with custom subtle chevron (`bi-chevron-down`).
+  - Responsive optimization: transforms into a circular 38px touch bubble on mobile viewports (< 768px) matching other action icons.
+  - Isolated glassmorphism dropdown menu with enhanced entry animation (`dropdownFadeSlideIn`), shadow depth, and user identity header.
+
+---
+
+## 24. PRODUCT STOCK QUANTITY, INTERNET IMAGE LINK & STOREFRONT AVAILABILITY VISIBILITY
+
+Implemented professional pharmacy inventory management and stock transparency across the admin portal and storefront:
+
+- **Admin Products Management Modal (`admin/products.html` & `js/pages/admin-products.js`)**:
+  - Added **Stock Quantity (Units Available)** field (`#mProdStock`) supporting explicit initial stock configuration.
+  - Added **Picture Image Link (Internet URL)** field (`#mProdImage`) with a live interactive image preview card (`#mProdImagePreview`) and instant fallback handling for any external web link.
+  - Upgraded Admin Products Table with a dedicated **Stock Available** column rendering badge indicators (`XX units`) based on live stock quantity.
+- **Storefront Stock Availability Visibility (`js/components/product-card.js`, `js/pages/product-details.js`, `js/components/modal.js`)**:
+  - **Product Cards**: Display real-time stock indicators:
+    - Normal stock (> 8 units): `In Stock (XX available)` in green medical badge.
+    - Low stock (1–8 units): `Only X left in stock` with amber pulse indicator.
+    - Out of stock (0 units): `Out of Stock` with disabled Add to Cart button.
+  - **Product Details Page & Quick View Modal**: Dynamic stock badge displaying precise units available, auto-capping quantity selection at maximum stock and disabling cart submission when inventory is exhausted.
+- **Backend Stock & Image Synchronization (`ProductServiceImpl.java`)**:
+  - Enhanced `updateProduct` to synchronize inventory `currentStock` and `ProductImage` primary URL upon updates.
+
+---
 *Document maintained automatically with each build increment.*
