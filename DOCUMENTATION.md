@@ -531,4 +531,16 @@ Implemented critical pharmaceutical safety protocols for batch expiry tracking, 
   - Automatically calculates `expiringSoon` boolean flag based on `LocalDate.now().plusMonths(3)`.
 
 ---
+
+## 27. FULL-VIEWPORT ADMIN SIDEBAR & SEAMLESS NAVY LAYOUT FIX
+
+Fixed the admin dashboard sidebar background cutoff to ensure continuous edge-to-edge dark navy framing:
+
+- **Full-Viewport Height & Container Alignment (`css/admin.css`)**:
+  - Configured `#admin-sidebar-container` with `min-height: 100vh`, `display: flex`, `flex-direction: column`, and `background-color: var(--dark-navy)`.
+  - Configured `.admin-sidebar` with `position: sticky; top: 0; min-height: 100vh; height: 100%; max-height: 100vh; overflow-y: auto;` to eliminate trailing white gaps when scrolling through long inventory and product tables.
+  - Anchored `.admin-sidebar-footer` to the bottom with `margin-top: auto` and dedicated background isolation.
+  - Implemented slim custom scrollbars on desktop and clean mobile drawer sliding overlays (`@media (max-width: 991.98px)`).
+
+---
 *Document maintained automatically with each build increment.*
