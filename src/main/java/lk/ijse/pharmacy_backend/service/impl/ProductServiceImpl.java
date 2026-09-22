@@ -34,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final MedicineDetailsRepository medicineDetailsRepository;
     private final ProductImageRepository productImageRepository;
     private final InventoryRepository inventoryRepository;
+    private final InventoryBatchRepository inventoryBatchRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -213,7 +214,28 @@ public class ProductServiceImpl implements ProductService {
                 .build();
         inventoryRepository.save(inventory);
 
-        log.info("Created new pharmacy product: {} (ID: {})", savedProduct.getName(), savedProduct.getId());
+        // Save Batch with Expiry Date
+        java.time.LocalDate expiry = null;
+        if (request.getExpiryDate() != null && !request.getExpiryDate().isBlank()) {
+            try {
+                expiry = java.time.LocalDate.parse(request.getExpiryDate().trim());
+            } catch (Exception e) {
+                expiry = java.time.LocalDate.now().plusMonths(24);
+            }
+        } else {
+            expiry = java.time.LocalDate.now().plusMonths(24);
+        }
+
+        InventoryBatch batch = InventoryBatch.builder()
+                .inventory(inventory)
+                .batchNumber("BAT-" + (1000 + savedProduct.getId()))
+                .manufacturingDate(java.time.LocalDate.now().minusMonths(1))
+                .expiryDate(expiry)
+                .quantity(initialStock)
+                .build();
+        inventoryBatchRepository.save(batch);
+
+        log.info("Created new pharmacy product: {} (ID: {}, Expiry: {})", savedProduct.getName(), savedProduct.getId(), expiry);
         return mapToDTO(savedProduct);
     }
 
@@ -317,6 +339,20 @@ public class ProductServiceImpl implements ProductService {
         int reorderLevel = inventory != null ? inventory.getReorderLevel() : 10;
         String aisle = inventory != null ? inventory.getLocationAisle() : "Main Pharmacy";
 
+        String expiryDateStr = "N/A (Device)";
+        boolean expiringSoon = false;
+        if (inventory != null) {
+            List<InventoryBatch> batches = inventoryBatchRepository.findByInventoryOrderByExpiryDateAsc(inventory);
+            if (!batches.isEmpty()) {
+                InventoryBatch earliest = batches.get(0);
+                if (earliest.getExpiryDate() != null) {
+                    expiryDateStr = earliest.getExpiryDate().toString();
+                    java.time.LocalDate threshold = java.time.LocalDate.now().plusMonths(3);
+                    expiringSoon = earliest.getExpiryDate().isBefore(threshold);
+                }
+            }
+        }
+
         return ProductDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -345,6 +381,8 @@ public class ProductServiceImpl implements ProductService {
                 .stock(stock)
                 .reorderLevel(reorderLevel)
                 .locationAisle(aisle)
+                .expiryDate(expiryDateStr)
+                .expiringSoon(expiringSoon)
                 .active(product.isActive())
                 .createdAt(product.getCreatedAt())
                 .build();

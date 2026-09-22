@@ -42,6 +42,8 @@ public class ProductDTO {
     private Integer stock;
     private Integer reorderLevel;
     private String locationAisle;
+    private String expiryDate;
+    private boolean expiringSoon;
     private boolean active;
     private LocalDateTime createdAt;
 }

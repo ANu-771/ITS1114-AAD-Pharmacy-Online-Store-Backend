@@ -53,8 +53,9 @@ public class ProductRequestDTO {
     private String manufacturer;
     private String storageInfo;
 
-    // Inventory
+    // Inventory & Expiry
     private Integer initialStock;
     private Integer reorderLevel;
     private String locationAisle;
+    private String expiryDate;
 }

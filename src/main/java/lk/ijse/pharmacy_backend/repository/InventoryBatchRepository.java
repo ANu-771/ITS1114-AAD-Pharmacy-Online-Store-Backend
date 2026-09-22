@@ -15,6 +15,8 @@ public interface InventoryBatchRepository extends JpaRepository<InventoryBatch, 
 
     List<InventoryBatch> findByInventory(Inventory inventory);
 
+    List<InventoryBatch> findByInventoryOrderByExpiryDateAsc(Inventory inventory);
+
     @Query("SELECT b FROM InventoryBatch b WHERE b.expiryDate < :currentDate")
     List<InventoryBatch> findExpiredBatches(@Param("currentDate") LocalDate currentDate);
 
