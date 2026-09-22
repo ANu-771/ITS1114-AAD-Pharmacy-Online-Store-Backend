@@ -44,7 +44,8 @@ public class SecurityConfig {
                         // 1. Public Authentication Endpoints
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
-                        // 2. Public Catalog Browsing (GET)
+                        // 2. Public Health & Catalog Browsing (GET/POST)
+                        .requestMatchers("/api/v1/test/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/brands/**").permitAll()
@@ -105,11 +106,25 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Allow common frontend development origins and methods
+//        configuration.setAllowedOriginPatterns(List.of(
+//                "http://localhost:*",
+//                "http://127.0.0.1:*",
+//                "http://[::1]:*",
+//                "https://kkpharmacy.vercel.app:*"
+//        ));
+
+
+
         configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
                 "http://127.0.0.1:*",
-                "http://[::1]:*"
+                "http://[::1]:*",
+                "https://kkpharmacy.vercel.app",
+                "https://*.vercel.app" // Optional: allows Vercel preview/branch deployments
         ));
+
+
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "Content-Disposition"));

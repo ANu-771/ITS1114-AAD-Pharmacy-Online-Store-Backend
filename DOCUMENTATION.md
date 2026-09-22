@@ -543,4 +543,23 @@ Fixed the admin dashboard sidebar background cutoff to ensure continuous edge-to
   - Implemented slim custom scrollbars on desktop and clean mobile drawer sliding overlays (`@media (max-width: 991.98px)`).
 
 ---
+
+## 28. BRANDED SPLASH SCREEN & STRICT SERVER CONNECTIVITY GATE
+
+Implemented an enterprise-grade initial loading screen and strict server connectivity gate preventing access when backend services are offline:
+
+- **Branded Splash Loading Screen (`css/components.css` & `js/components/server-gate.js`)**:
+  - Full-screen medical navy backdrop (`#kk-server-gate-overlay`) with a glowing, pulsing KK Pharmacy brand badge (`gateHeartbeat` keyframe animation).
+  - High-precision medical progress wave indicator tracking active server handshakes.
+  - Zero Flash of Unstyled Content (FOUC): Injected immediately upon DOM execution.
+- **Strict Server Connectivity Verification Gate (`js/components/server-gate.js` & `js/app.js`)**:
+  - Executed at step 0 of application bootstrapping before any UI components or API catalog calls run.
+  - Sends a health ping to the backend `/api/v1/test/ping` endpoint with an `AbortController` timeout (6s).
+  - **Online State**: Smoothly fades out (0.4s) and grants full access to storefront and admin consoles.
+  - **Offline / Error State**: Replaces the splash animation with a frosted glass **"Pharmacy Core Server Offline"** card with patient safety messaging and an interactive **"Retry Connection"** button (all raw technical endpoints omitted for production-grade UI).
+- **Backend Ping Alignment (`TestController.java` & `SecurityConfig.java`)**:
+  - Configured `/api/v1/test/ping` to support both `GET` and `POST` requests.
+  - Configured Spring Security to permit public, unauthenticated access to `/api/v1/test/**`.
+
+---
 *Document maintained automatically with each build increment.*
