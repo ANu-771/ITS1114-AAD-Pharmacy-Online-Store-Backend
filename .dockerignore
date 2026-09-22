@@ -1,0 +1,40 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Maven build output
+target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Local configuration and environment variables
+application-local.properties
+application-local.yml
+application-local.yaml
+application-dev-local.properties
+application-dev-local.yml
+.env
+.env.*
+
+# Logs and temp files
+*.log
+logs/
+uploads/
+temp_uploads/
+tmp/
+temp/
+*.tmp
+
+# Documentation and markdown files
+*.md
+HELP.md
+DOCUMENTATION.md
