@@ -49,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
     private final PrescriptionRepository prescriptionRepository;
     private final CartItemRepository cartItemRepository;
     private final CartService cartService;
+    private final lk.ijse.pharmacy_backend.service.EmailService emailService;
 
     private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("5000.00");
     private static final BigDecimal STANDARD_DELIVERY_FEE = new BigDecimal("350.00");
@@ -228,6 +229,13 @@ public class OrderServiceImpl implements OrderService {
 
         // 8. Clear user cart
         cartService.clearCart(userEmail);
+
+        // 9. Dispatch branded confirmation email receipt asynchronously
+        try {
+            emailService.sendOrderConfirmationReceipt(savedOrder, orderItemsToSave, payment);
+        } catch (Exception e) {
+            log.error("Failed to queue order confirmation email for order {}: {}", orderNumber, e.getMessage());
+        }
 
         log.info("Order created successfully: {} for user {}", orderNumber, userEmail);
         return mapToDTO(savedOrder);
