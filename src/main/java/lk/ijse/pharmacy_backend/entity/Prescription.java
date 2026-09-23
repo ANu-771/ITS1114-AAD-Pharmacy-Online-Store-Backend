@@ -36,7 +36,7 @@ public class Prescription {
     @Column(length = 150)
     private String patientName;
 
-    @Column(nullable = false, length = 500)
+    @Column(name = "prescription_url", nullable = false, columnDefinition = "TEXT")
     private String prescriptionUrl;
 
     @Builder.Default
