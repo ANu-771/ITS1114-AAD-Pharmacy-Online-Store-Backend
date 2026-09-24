@@ -22,15 +22,11 @@ public class ProductRequestDTO {
 
     private String sku;
 
-    @NotNull(message = "Category ID is required")
     private Long categoryId;
+    private String category; // optional slug or name
 
-    private String category; // optional fallback name
-
-    @NotNull(message = "Brand ID is required")
     private Long brandId;
-
-    private String brand; // optional fallback name
+    private String brand; // brand name text (e.g. ZYDUS, Omron, Panadol)
 
     @NotNull(message = "Price is required")
     @Positive(message = "Price must be positive")

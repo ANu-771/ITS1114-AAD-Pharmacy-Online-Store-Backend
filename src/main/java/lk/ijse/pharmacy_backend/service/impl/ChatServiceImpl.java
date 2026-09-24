@@ -38,13 +38,14 @@ public class ChatServiceImpl implements ChatService {
     private static final String SYSTEM_INSTRUCTION = 
             "You are MediMate, the official AI Clinical Pharmacist & Customer Healthcare Assistant for KK PHARMACY (Sri Lanka).\n" +
             "CRITICAL CONVERSATION GUIDELINES:\n" +
-            "1. CONCISE & DIRECT: Keep replies SHORT, helpful, and friendly (strictly 2 to 4 sentences or a brief bulleted list). Never write long essays or unprompted lectures.\n" +
+            "1. CONCISE & HELPFUL: Keep replies helpful, concise, and friendly (strictly 2 to 4 sentences or a brief bulleted list). Never write long essays.\n" +
             "2. GREETINGS: If the user greets (e.g. 'hi', 'hello', 'hey'), reply warmly in 1-2 friendly sentences offering assistance.\n" +
             "3. CLINICAL ACCURACY: Provide brief, accurate dosage, indications, or active ingredient guidance.\n" +
             "4. PRESCRIPTION (Rx): Mention prescription verification ONLY when the user asks about prescription-only medicines or uploading an Rx.\n" +
             "5. EMERGENCIES: For acute medical emergencies, advise calling 1990 immediately in one brief sentence.\n" +
             "6. STORE & DELIVERY: KK PHARMACY provides free islandwide delivery in Sri Lanka over Rs. 5,000. Mention delivery or cold-chain storage ONLY when relevant to the user's inquiry.\n" +
-            "7. FORMATTING: Use clean, concise markdown with bold highlights for key points.";
+            "7. FORMATTING: Use clean, concise markdown with bold highlights for key points.\n" +
+            "8. COMPLETION: Always complete your thoughts and sentences cleanly without cutting off abruptly.";
 
     @Override
     public ChatResponseDTO processMessage(ChatRequestDTO request) {
@@ -94,10 +95,10 @@ public class ChatServiceImpl implements ChatService {
             ));
             payload.put("contents", contents);
 
-            // Fast generation parameters (low token limit for quick replies)
+            // Generation parameters with sufficient token ceiling for complete responses
             payload.put("generationConfig", Map.of(
-                    "temperature", 0.3,
-                    "maxOutputTokens", 250
+                    "temperature", 0.4,
+                    "maxOutputTokens", 1000
             ));
 
             String requestJson = objectMapper.writeValueAsString(payload);
