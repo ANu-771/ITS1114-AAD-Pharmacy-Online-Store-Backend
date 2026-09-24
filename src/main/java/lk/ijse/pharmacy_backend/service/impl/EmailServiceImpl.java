@@ -68,6 +68,99 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Override
+    @Async
+    public void sendPasswordResetOtp(String toEmail, String otpCode, String recipientName) {
+        log.info("🔐 [EmailService] Password Reset OTP requested for {} -> OTP: [{}] (Valid 10 mins)", toEmail, otpCode);
+
+        if (mailSender == null || senderEmail == null || senderEmail.isBlank() || senderEmail.contains("yourpharmacy")) {
+            log.warn("⚠️ [EmailService] Gmail SMTP credentials not fully configured. Generated OTP for {} is [{}] (Viewable in server logs for testing)", toEmail, otpCode);
+            return;
+        }
+
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
+
+            helper.setFrom(String.format("KK PHARMACY Security <%s>", senderEmail));
+            helper.setTo(toEmail.trim());
+            helper.setSubject("🔒 KK PHARMACY — Password Reset Verification Code");
+
+            String htmlBody = buildOtpEmailHtml(recipientName != null ? recipientName : "Valued Member", otpCode);
+            helper.setText(htmlBody, true);
+
+            mailSender.send(mimeMessage);
+            log.info("✅ [EmailService] Password reset OTP delivered to {}", toEmail);
+
+        } catch (Exception e) {
+            log.error("❌ [EmailService] Failed to send password reset OTP to {}: {}", toEmail, e.getMessage());
+        }
+    }
+
+    private String buildOtpEmailHtml(String name, String otpCode) {
+        return String.format("""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>KK PHARMACY Password Reset</title>
+            </head>
+            <body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                <div style="max-width: 560px; margin: 30px auto; background-color: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0, 59, 102, 0.08); border: 1px solid #E2E8F0;">
+                    
+                    <!-- Header -->
+                    <div style="background: linear-gradient(135deg, #003B66 0%%, #001A33 100%%); padding: 32px 24px; text-align: center; color: #FFFFFF;">
+                        <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;">
+                            🏥 KK PHARMACY
+                        </div>
+                        <div style="font-size: 13px; color: #93C5FD; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
+                            Account Security & Verification
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div style="padding: 32px 28px;">
+                        <div style="font-size: 18px; font-weight: 700; color: #1E293B; margin-bottom: 12px;">
+                            Hello %s,
+                        </div>
+                        <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 24px;">
+                            We received a request to reset your password for your <strong>KK PHARMACY</strong> account. Use the 6-digit verification code below to securely set your new password:
+                        </p>
+
+                        <!-- OTP Box -->
+                        <div style="background: #F0FDF4; border: 2px dashed #10B981; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
+                            <div style="font-size: 12px; font-weight: 700; color: #047857; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+                                Your One-Time Verification Code
+                            </div>
+                            <div style="font-size: 36px; font-weight: 800; letter-spacing: 10px; color: #003B66; font-family: monospace;">
+                                %s
+                            </div>
+                            <div style="font-size: 12px; color: #64748B; margin-top: 6px;">
+                                ⏱️ This code will expire in <strong>10 minutes</strong>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #FEF3C7; border-left: 4px solid #F59E0B; padding: 12px 16px; border-radius: 6px; font-size: 13px; color: #92400E; margin-bottom: 24px; line-height: 1.5;">
+                            <strong>Security Tip:</strong> Never share this code with anyone. KK PHARMACY support staff will never ask you for your verification code or password.
+                        </div>
+
+                        <p style="font-size: 13px; color: #64748B; line-height: 1.5;">
+                            If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.
+                        </p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="background-color: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 20px; text-align: center; font-size: 12px; color: #94A3B8;">
+                        KK PHARMACY • Certified Healthcare Network • Colombo, Sri Lanka<br>
+                        Need help? Contact support at <strong>+94 11 234 5678</strong> or <a href="mailto:support@kkpharmacy.com" style="color: #0284C7; text-decoration: none;">support@kkpharmacy.com</a>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """, name, otpCode);
+    }
+
     /**
      * Builds a responsive, clinical-standard HTML email receipt with inline CSS styling.
      */

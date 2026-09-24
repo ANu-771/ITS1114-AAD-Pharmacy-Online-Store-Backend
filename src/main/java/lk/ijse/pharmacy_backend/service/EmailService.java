@@ -19,4 +19,13 @@ public interface EmailService {
      * @param payment The associated payment entity
      */
     void sendOrderConfirmationReceipt(Order order, List<OrderItem> items, Payment payment);
+
+    /**
+     * Asynchronously dispatches a secure, 6-digit password reset OTP email to the user.
+     *
+     * @param toEmail       The recipient email address
+     * @param otpCode       The 6-digit one-time password
+     * @param recipientName The recipient full name or username
+     */
+    void sendPasswordResetOtp(String toEmail, String otpCode, String recipientName);
 }

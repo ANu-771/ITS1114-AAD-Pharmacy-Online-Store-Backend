@@ -1,10 +1,6 @@
 package lk.ijse.pharmacy_backend.service;
 
-import lk.ijse.pharmacy_backend.dto.auth.AuthResponse;
-import lk.ijse.pharmacy_backend.dto.auth.LoginRequest;
-import lk.ijse.pharmacy_backend.dto.auth.RefreshTokenRequest;
-import lk.ijse.pharmacy_backend.dto.auth.RegisterRequest;
-import lk.ijse.pharmacy_backend.dto.auth.UserSummaryDTO;
+import lk.ijse.pharmacy_backend.dto.auth.*;
 import lk.ijse.pharmacy_backend.dto.user.UserProfileUpdateDTO;
 
 public interface AuthService {
@@ -18,4 +14,10 @@ public interface AuthService {
     UserSummaryDTO getCurrentUser(String email);
 
     UserSummaryDTO updateProfile(String email, UserProfileUpdateDTO dto);
+
+    void sendForgotPasswordOtp(ForgotPasswordRequest request);
+
+    boolean verifyPasswordResetOtp(VerifyOtpRequest request);
+
+    void resetPasswordWithOtp(ResetPasswordRequest request);
 }
