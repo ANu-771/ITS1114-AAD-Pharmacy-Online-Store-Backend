@@ -131,14 +131,16 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Brand brand;
-        if (request.getBrandId() != null) {
+        if (request.getBrand() != null && !request.getBrand().trim().isEmpty()) {
+            String brandName = request.getBrand().trim();
+            brand = brandRepository.findByName(brandName)
+                    .orElseGet(() -> brandRepository.save(Brand.builder().name(brandName).verified(true).build()));
+        } else if (request.getBrandId() != null) {
             brand = brandRepository.findById(request.getBrandId())
                     .orElseThrow(() -> new ResourceNotFoundException("Brand not found with ID: " + request.getBrandId()));
-        } else if (request.getBrand() != null) {
-            brand = brandRepository.findByName(request.getBrand())
-                    .orElseGet(() -> brandRepository.save(Brand.builder().name(request.getBrand()).verified(true).build()));
         } else {
-            throw new BadRequestException("Brand is required");
+            brand = brandRepository.findByName("KK Digital Pharmacy")
+                    .orElseGet(() -> brandRepository.save(Brand.builder().name("KK Digital Pharmacy").verified(true).build()));
         }
 
         String sku = (request.getSku() != null && !request.getSku().trim().isEmpty())
@@ -260,7 +262,12 @@ public class ProductServiceImpl implements ProductService {
             product.setCategory(category);
         }
 
-        if (request.getBrandId() != null) {
+        if (request.getBrand() != null && !request.getBrand().trim().isEmpty()) {
+            String brandName = request.getBrand().trim();
+            Brand brand = brandRepository.findByName(brandName)
+                    .orElseGet(() -> brandRepository.save(Brand.builder().name(brandName).verified(true).build()));
+            product.setBrand(brand);
+        } else if (request.getBrandId() != null) {
             Brand brand = brandRepository.findById(request.getBrandId())
                     .orElseThrow(() -> new ResourceNotFoundException("Brand not found"));
             product.setBrand(brand);
@@ -273,7 +280,11 @@ public class ProductServiceImpl implements ProductService {
             if (request.getActiveIngredient() != null) details.setActiveIngredient(request.getActiveIngredient());
             if (request.getDosageForm() != null) details.setDosageForm(request.getDosageForm());
             if (request.getStrength() != null) details.setStrength(request.getStrength());
-            if (request.getManufacturer() != null) details.setManufacturer(request.getManufacturer());
+            if (request.getManufacturer() != null && !request.getManufacturer().isBlank()) {
+                details.setManufacturer(request.getManufacturer().trim());
+            } else if (product.getBrand() != null) {
+                details.setManufacturer(product.getBrand().getName());
+            }
             if (request.getStorageInfo() != null) details.setStorageInfo(request.getStorageInfo());
             medicineDetailsRepository.save(details);
         });
@@ -285,6 +296,45 @@ public class ProductServiceImpl implements ProductService {
                 if (request.getReorderLevel() != null) inv.setReorderLevel(request.getReorderLevel());
                 inventoryRepository.save(inv);
             });
+        }
+
+        // Update Batch / Expiry Date if provided
+        if (request.getExpiryDate() != null && !request.getExpiryDate().isBlank() && !request.getExpiryDate().equalsIgnoreCase("Not Set")) {
+            java.time.LocalDate newExpiry = null;
+            try {
+                newExpiry = java.time.LocalDate.parse(request.getExpiryDate().trim());
+            } catch (Exception e) {
+                log.warn("Unable to parse expiry date: {}", request.getExpiryDate());
+            }
+            if (newExpiry != null) {
+                final java.time.LocalDate finalExpiry = newExpiry;
+                Inventory inv = inventoryRepository.findByProduct(product).orElseGet(() -> {
+                    Inventory newInv = Inventory.builder()
+                            .product(product)
+                            .currentStock(request.getInitialStock() != null ? request.getInitialStock() : 50)
+                            .reorderLevel(10)
+                            .locationAisle("Aisle 1")
+                            .build();
+                    return inventoryRepository.save(newInv);
+                });
+
+                List<InventoryBatch> batches = inventoryBatchRepository.findByInventoryOrderByExpiryDateAsc(inv);
+                if (!batches.isEmpty()) {
+                    InventoryBatch primaryBatch = batches.get(0);
+                    primaryBatch.setExpiryDate(finalExpiry);
+                    inventoryBatchRepository.save(primaryBatch);
+                } else {
+                    InventoryBatch newBatch = InventoryBatch.builder()
+                            .inventory(inv)
+                            .batchNumber("BAT-" + (1000 + product.getId()))
+                            .manufacturingDate(java.time.LocalDate.now().minusMonths(1))
+                            .expiryDate(finalExpiry)
+                            .quantity(inv.getCurrentStock() > 0 ? inv.getCurrentStock() : 50)
+                            .build();
+                    inventoryBatchRepository.save(newBatch);
+                }
+                log.info("Updated product ID {} batch expiry date to {}", product.getId(), finalExpiry);
+            }
         }
 
         // Update Primary Image URL if provided
@@ -339,7 +389,7 @@ public class ProductServiceImpl implements ProductService {
         int reorderLevel = inventory != null ? inventory.getReorderLevel() : 10;
         String aisle = inventory != null ? inventory.getLocationAisle() : "Main Pharmacy";
 
-        String expiryDateStr = "N/A (Device)";
+        String expiryDateStr = null;
         boolean expiringSoon = false;
         if (inventory != null) {
             List<InventoryBatch> batches = inventoryBatchRepository.findByInventoryOrderByExpiryDateAsc(inventory);
@@ -350,6 +400,18 @@ public class ProductServiceImpl implements ProductService {
                     java.time.LocalDate threshold = java.time.LocalDate.now().plusMonths(3);
                     expiringSoon = earliest.getExpiryDate().isBefore(threshold);
                 }
+            }
+        }
+
+        if (expiryDateStr == null || expiryDateStr.isBlank() || expiryDateStr.equalsIgnoreCase("N/A (Device)")) {
+            boolean isEquipment = product.getCategory() != null &&
+                    (product.getCategory().getSlug().toLowerCase().contains("equipment") ||
+                     product.getCategory().getName().toLowerCase().contains("equipment"));
+            if (isEquipment) {
+                expiryDateStr = "2029-12-31"; // Medical equipment calibration / warranty
+            } else {
+                // Default 2-year pharmaceutical shelf life
+                expiryDateStr = java.time.LocalDate.now().plusMonths(24).toString();
             }
         }
 

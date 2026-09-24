@@ -1,11 +1,7 @@
 package lk.ijse.pharmacy_backend.controller;
 
 import jakarta.validation.Valid;
-import lk.ijse.pharmacy_backend.dto.auth.AuthResponse;
-import lk.ijse.pharmacy_backend.dto.auth.LoginRequest;
-import lk.ijse.pharmacy_backend.dto.auth.RefreshTokenRequest;
-import lk.ijse.pharmacy_backend.dto.auth.RegisterRequest;
-import lk.ijse.pharmacy_backend.dto.auth.UserSummaryDTO;
+import lk.ijse.pharmacy_backend.dto.auth.*;
 import lk.ijse.pharmacy_backend.dto.common.ApiResponse;
 import lk.ijse.pharmacy_backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -51,5 +47,23 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout() {
         return ResponseEntity.ok(ApiResponse.success(null, "Logged out successfully"));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<Void>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.sendForgotPasswordOtp(request);
+        return ResponseEntity.ok(ApiResponse.success(null, "If an account exists with this email, a 6-digit verification code has been sent."));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<ApiResponse<Boolean>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        boolean valid = authService.verifyPasswordResetOtp(request);
+        return ResponseEntity.ok(ApiResponse.success(valid, "Verification code confirmed."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPasswordWithOtp(request);
+        return ResponseEntity.ok(ApiResponse.success(null, "Password reset successfully. You can now sign in."));
     }
 }

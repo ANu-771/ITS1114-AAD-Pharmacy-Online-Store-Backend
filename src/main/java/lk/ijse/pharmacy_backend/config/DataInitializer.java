@@ -38,16 +38,71 @@ public class DataInitializer implements CommandLineRunner {
     private final InventoryService inventoryService;
     private final UserAddressService userAddressService;
     private final PasswordEncoder passwordEncoder;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) {
         log.info("Checking and initializing KK Digital Pharmacy database seeds...");
+        updateSchema();
         seedRoles();
         seedUsers();
         seedCategories();
         seedBrands();
         seedProductsAndInventory();
+        fixProductCategories();
         log.info("Database seeding complete for KK Digital Pharmacy!");
+    }
+
+    private void updateSchema() {
+        try {
+            jdbcTemplate.execute("ALTER TABLE product_images MODIFY COLUMN image_url TEXT NOT NULL");
+            log.info("Migrated product_images.image_url column to TEXT");
+        } catch (Exception e) {
+            log.warn("Could not alter product_images column: {}", e.getMessage());
+        }
+        try {
+            jdbcTemplate.execute("ALTER TABLE prescriptions MODIFY COLUMN prescription_url TEXT NOT NULL");
+            log.info("Migrated prescriptions.prescription_url column to TEXT");
+        } catch (Exception e) {
+            log.warn("Could not alter prescriptions column: {}", e.getMessage());
+        }
+    }
+
+    private void fixProductCategories() {
+        try {
+            // Fix Vitamin C & Multivitamins -> vitamins category (slug: vitamins)
+            jdbcTemplate.execute(
+                "UPDATE products p " +
+                "JOIN categories c ON c.slug = 'vitamins' " +
+                "SET p.category_id = c.id " +
+                "WHERE p.name LIKE '%Vitamin%' OR p.name LIKE '%Multivitamin%'"
+            );
+            // Fix First Aid & Antiseptic -> first-aid category (slug: first-aid)
+            jdbcTemplate.execute(
+                "UPDATE products p " +
+                "JOIN categories c ON c.slug = 'first-aid' " +
+                "SET p.category_id = c.id " +
+                "WHERE p.name LIKE '%First Aid%' OR p.name LIKE '%Antiseptic%' OR p.name LIKE '%Wound%'"
+            );
+            // Fix Medical Equipment -> equipment category (slug: equipment)
+            jdbcTemplate.execute(
+                "UPDATE products p " +
+                "JOIN categories c ON c.slug = 'equipment' " +
+                "SET p.category_id = c.id " +
+                "WHERE (p.name LIKE '%Monitor%' OR p.name LIKE '%Thermometer%' OR p.name LIKE '%Nebulizer%' OR p.name LIKE '%Glucose%' OR p.name LIKE '%Oximeter%') " +
+                "AND p.name NOT LIKE '%Vitamin%'"
+            );
+            // Fix Baby Care -> baby-care category (slug: baby-care)
+            jdbcTemplate.execute(
+                "UPDATE products p " +
+                "JOIN categories c ON c.slug = 'baby-care' " +
+                "SET p.category_id = c.id " +
+                "WHERE p.name LIKE '%Baby%' OR p.name LIKE '%Diaper%' OR p.name LIKE '%Gripe Water%'"
+            );
+            log.info("Successfully reconciled all product categories in database!");
+        } catch (Exception e) {
+            log.warn("Could not reconcile product categories: {}", e.getMessage());
+        }
     }
 
     private void seedRoles() {
